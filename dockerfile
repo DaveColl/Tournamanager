@@ -9,6 +9,7 @@ RUN apt-get update && apt-get upgrade -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+# Install any needed packages specified in requirements.txt    
 COPY requirements.txt .
 
 # Upgrade pip itself before installing requirements
