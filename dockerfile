@@ -1,20 +1,14 @@
 # Use an official Python runtime as a parent image
-FROM python:3.12-slim
+FROM python:3.14.7-alpine3.24
 
 #change the working directory to /app
 WORKDIR /app
-
-# Upgrade underlying Debian OS packages to patch system CVEs
-RUN apt-get update && apt-get upgrade -y \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
 
 # Install any needed packages specified in requirements.txt    
 COPY requirements.txt .
 
 # Upgrade pip itself before installing requirements
-RUN pip install --no-cache-dir --upgrade pip \
-    && pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the current directory contents into the container at /app    
 COPY . .
