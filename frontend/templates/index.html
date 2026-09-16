@@ -9,20 +9,14 @@
 
 <body>
     <h1>Tournamanager</h1>
-    <p id="backend-status">Checking backend connection...</p>
 
-    <script>
-        fetch('/api/status')
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('backend-status').textContent =
-                    `Backend says: ${data.status} (${data.service})`;
-            })
-            .catch(() => {
-                document.getElementById('backend-status').textContent =
-                    'Backend unreachable.';
-            });
-    </script>
+    <!-- backend_data is set in frontend/main.py: None if the backend could
+         not be reached, otherwise the JSON it returned -->
+    {% if backend_data %}
+        <p>Backend says: {{ backend_data.status }} ({{ backend_data.service }})</p>
+    {% else %}
+        <p>Backend unreachable.</p>
+    {% endif %}
 </body>
 
 </html>

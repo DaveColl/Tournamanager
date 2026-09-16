@@ -1,3 +1,17 @@
+venv/
+.venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
 .git/
 .gitignore
+.mypy_cache/
+.pytest_cache/
+.vscode/
+.idea/
+*.log
 .DS_Store

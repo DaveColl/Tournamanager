@@ -2,7 +2,9 @@
 from flask import Flask, jsonify
 
 # Initialisiert die Flask-Instanz von der Flask-Klasse und erstellt eine neue Flask-Anwendung
-# Das Frontend wird separat (per nginx) ausgeliefert, das Backend dient nur noch als JSON-API
+# Das Frontend läuft als eigener Container und ruft dieses Backend serverseitig
+# (Python zu Python, über das Docker-Netzwerk) auf. Das Backend dient nur noch
+# als JSON-API und liefert selbst kein HTML aus.
 app = Flask(__name__)
 
 # Healthcheck-/Status-Endpunkt, den das Frontend abfragen kann, um die Verbindung zu prüfen
