@@ -1,0 +1,26 @@
+# Starts both containers together and puts them on the same network so they
+# can reach each other by service name (e.g. "backend"). Run with:
+# docker compose up --build
+services:
+  # The Flask JSON API
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    # No "ports:" here on purpose - the frontend reaches this container
+    # directly over Docker's internal network (as "backend:5000"), so we
+    # don't need to publish this port to the host machine at all.
+
+  # The Flask app that renders the HTML page. It calls the backend itself
+  # (server-side, in Python) and fills the template with the result -
+  # no JavaScript needed for that part, only for the 30s live refresh.
+  frontend:
+    build: ./frontend
+    ports:
+      # host_port:container_port - this one IS published, since it's the
+      # page your browser actually opens.
+      - "8080:5000"
+    depends_on:
+      # Makes sure "backend" is started before "frontend" (does not wait for
+      # it to be fully ready, just for the container to start)
+      - backend
+    restart: unless-stopped
