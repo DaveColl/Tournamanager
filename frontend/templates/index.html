@@ -8,7 +8,21 @@
 </head>
 
 <body>
+    <h1>Tournamanager</h1>
+    <p id="backend-status">Checking backend connection...</p>
 
+    <script>
+        fetch('/api/status')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('backend-status').textContent =
+                    `Backend says: ${data.status} (${data.service})`;
+            })
+            .catch(() => {
+                document.getElementById('backend-status').textContent =
+                    'Backend unreachable.';
+            });
+    </script>
 </body>
 
 </html>

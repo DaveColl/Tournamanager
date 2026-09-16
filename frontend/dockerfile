@@ -1,0 +1,22 @@
+# Use an official nginx runtime to serve the static frontend
+FROM nginx:1.27-alpine
+
+# Remove the default nginx welcome page
+RUN rm -rf /usr/share/nginx/html/*
+
+# Copy the static site into nginx's web root
+COPY templates/index.html /usr/share/nginx/html/index.html
+
+# Use our own server config (adds the /api/ reverse proxy to the backend and HTTPS)
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Generate a self-signed certificate for local HTTPS (browsers will warn that
+# it's untrusted - replace with a real certificate for anything but local dev)
+RUN apk add --no-cache openssl && \
+    mkdir -p /etc/nginx/ssl && \
+    openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+        -keyout /etc/nginx/ssl/nginx.key \
+        -out /etc/nginx/ssl/nginx.crt \
+        -subj "/CN=localhost"
+
+CMD ["nginx", "-g", "daemon off;"]
