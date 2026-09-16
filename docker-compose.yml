@@ -12,7 +12,7 @@ services:
 
   # The Flask app that renders the HTML page. It calls the backend itself
   # (server-side, in Python) and fills the template with the result -
-  # no JavaScript needed in the browser.
+  # no JavaScript needed for that part, only for the 30s live refresh.
   frontend:
     build: ./frontend
     ports:

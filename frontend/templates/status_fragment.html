@@ -1,0 +1,8 @@
+{# Small, reusable snippet - included on first page load AND returned by
+   /status-fragment for the 30-second refresh, so the logic only lives here
+   once instead of being duplicated. #}
+{% if backend_data %}
+    Backend says: {{ backend_data.status }} ({{ backend_data.service }})
+{% else %}
+    Backend unreachable.
+{% endif %}

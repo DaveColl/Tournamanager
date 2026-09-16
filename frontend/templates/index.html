@@ -10,13 +10,26 @@
 <body>
     <h1>Tournamanager</h1>
 
-    <!-- backend_data is set in frontend/main.py: None if the backend could
-         not be reached, otherwise the JSON it returned -->
-    {% if backend_data %}
-        <p>Backend says: {{ backend_data.status }} ({{ backend_data.service }})</p>
-    {% else %}
-        <p>Backend unreachable.</p>
-    {% endif %}
+    <!-- This div's content comes from status_fragment.html, rendered by
+         Python. It's included here for the very first page load, and later
+         swapped out by the script below without reloading the page. -->
+    <div id="backend-status">{% include 'status_fragment.html' %}</div>
+
+    <script>
+        // Every 30 seconds, ask OUR OWN frontend (not the backend directly)
+        // for a fresh copy of the status snippet and drop it into the page.
+        // This is the only JavaScript on the whole site - it doesn't decide
+        // what to show, it just asks Python for HTML and displays it.
+        function refreshBackendStatus() {
+            fetch('/status-fragment')
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('backend-status').innerHTML = html;
+                });
+        }
+
+        setInterval(refreshBackendStatus, 30000);
+    </script>
 </body>
 
 </html>
