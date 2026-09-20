@@ -37,7 +37,7 @@ services:
       MYSQL_PASSWORD: "?bBxar1v{V1>Ty/h-qH"
     ports:
       # Opens port 3306 for external database management tools (MySQL Workbench)
-      - "3306:3306"
+      - "127.0.0.1:3306:3306"
     volumes:
       # Keeps all database records persistent so data isn't lost after a restart
       - db_data:/var/lib/mysql
