@@ -5,6 +5,7 @@ services:
   # The Flask JSON API
   backend:
     build: ./backend
+    #needs to be removed in the future
     ports:
       - 5000:5000
     depends_on:
@@ -36,7 +37,7 @@ services:
       MYSQL_USER: Turnier_Admin
       MYSQL_PASSWORD: "?bBxar1v{V1>Ty/h-qH"
     ports:
-      # Opens port 3306 for external database management tools (MySQL Workbench)
+      # Opens port 3306 for external database management tools on the host machine (MySQL Workbench)
       - "127.0.0.1:3306:3306"
     volumes:
       # Keeps all database records persistent so data isn't lost after a restart
