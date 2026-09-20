@@ -5,11 +5,14 @@ services:
   # The Flask JSON API
   backend:
     build: ./backend
+    ports:
+      - 5000:5000
+    depends_on:
+      # Makes sure "database" is started before "backend" (does not wait for 
+      # it to be fully ready, just for the container to start)
+      - database
     restart: unless-stopped
-    # No "ports:" here on purpose - the frontend reaches this container
-    # directly over Docker's internal network (as "backend:5000"), so we
-    # don't need to publish this port to the host machine at all.
-
+    
   # The Flask app that renders the HTML page. It calls the backend itself
   # (server-side, in Python) and fills the template with the result -
   # no JavaScript needed for that part, only for the 30s live refresh.
@@ -24,3 +27,23 @@ services:
       # it to be fully ready, just for the container to start)
       - backend
     restart: unless-stopped
+  database:
+    image: mysql:8.0
+    container_name: tournamanager-database
+    environment:
+      MYSQL_ROOT_PASSWORD: "Password123"
+      MYSQL_DATABASE: Turnier_DB
+      MYSQL_USER: Turnier_Admin
+      MYSQL_PASSWORD: "?bBxar1v{V1>Ty/h-qH"
+    ports:
+      # Opens port 3306 for external database management tools (MySQL Workbench)
+      - "3306:3306"
+    volumes:
+      # Keeps all database records persistent so data isn't lost after a restart
+      - db_data:/var/lib/mysql
+      #Automatically executes the init.sql script when creating the database for the first time
+      - ./Database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: unless-stopped
+volumes:
+  # Declares the global volume where Docker physically saves the database files
+  db_data:
