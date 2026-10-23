@@ -1,19 +1,31 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Tournamanager</title>
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Icons -->
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
+    >
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
-    <h1>Tournamanager</h1>
+    <!--h1>Tournamanager</h1-->
 
-    <!-- This div's content comes from status_fragment.html, rendered by
+    <!--This div's content comes from status_fragment.html, rendered by
          Python. It's included here for the very first page load, and later
          swapped out by the script below without reloading the page. -->
-    <div id="backend-status">{% include 'status_fragment.html' %}</div>
+    <!--div id="backend-status">{% include 'status_fragment.html' %}</div>
 
     <script>
         // Every 30 seconds, ask OUR OWN frontend (not the backend directly)
@@ -29,7 +41,360 @@
         }
 
         setInterval(refreshBackendStatus, 30000);
-    </script>
+    </script -->
+
+    <div class="layout">
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="sidebar-logo">
+            <h2>🏆 Tournamanager</h2>
+        </div>
+
+        <nav class="sidebar-nav">
+
+            <a href="#" class="active">
+                <i class="fa-solid fa-house"></i>
+                <span>Home</span>
+            </a>
+
+            <a href="#">
+                <i class="fa-solid fa-trophy"></i>
+                <span>Turniere</span>
+            </a>
+
+            <a href="#">
+                <i class="fa-solid fa-ranking-star"></i>
+                <span>Rankings</span>
+            </a>
+
+            <a href="#">
+                <i class="fa-solid fa-users"></i>
+                <span>Teams</span>
+            </a>
+
+            <a href="#">
+                <i class="fa-solid fa-calendar"></i>
+                <span>Kalender</span>
+            </a>
+
+            <a href="#">
+                <i class="fa-solid fa-bell"></i>
+                <span>Benachrichtigungen</span>
+            </a>
+
+            <a href="#">
+                <i class="fa-solid fa-gear"></i>
+                <span>Einstellungen</span>
+            </a>
+
+        </nav>
+
+    </aside>
+
+    <!-- MAIN CONTENT -->
+
+    <main class="main-content">
+
+        <!-- HEADER -->
+
+        <header class="topbar">
+
+            <div class="title-section">
+                <h1>Tournamanager</h1>
+                <p>Die Plattform für E-Sports und Community Turniere</p>
+            </div>
+
+            <div class="auth-buttons">
+
+                <button class="btn btn-secondary">
+                    Anmelden
+                </button>
+
+                <button class="btn btn-primary">
+                    Registrieren
+                </button>
+
+            </div>
+
+        </header>
+
+        <!-- HERO -->
+
+        <section class="hero-section">
+
+            <div class="hero-content">
+
+                <h2>
+                    Turniere organisieren war noch nie so einfach
+                </h2>
+
+                <p>
+                    Erstelle eigene Turniere, verfolge Live-Matches,
+                    verwalte Teams und erklimme die Rangliste.
+                </p>
+
+                <div class="hero-buttons">
+
+                    <button class="btn btn-primary">
+                        Turnier erstellen
+                    </button>
+
+                    <button class="btn btn-secondary">
+                        Turniere entdecken
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- STATS -->
+
+        <section class="stats-grid">
+
+            <article class="stat-card">
+                <h3>1.204</h3>
+                <p>Spieler Online</p>
+            </article>
+
+            <article class="stat-card">
+                <h3>327</h3>
+                <p>Aktive Turniere</p>
+            </article>
+
+            <article class="stat-card">
+                <h3>29</h3>
+                <p>Live Matches</p>
+            </article>
+
+            <article class="stat-card">
+                <h3>54.694</h3>
+                <p>Matches Gesamt</p>
+            </article>
+
+        </section>
+
+        <!-- LIVE + NEWS -->
+
+        <section class="content-grid">
+
+            <article class="card">
+
+                <div class="card-header">
+                    <h2>🔴 Live Ticker</h2>
+                </div>
+
+                <div class="ticker-list">
+
+                    <div class="ticker-item">
+                        Alpha 2 : 1 Beta
+                    </div>
+
+                    <div class="ticker-item">
+                        Rocket Cup startet in 15 Minuten
+                    </div>
+
+                    <div class="ticker-item">
+                        Dein nächstes Match beginnt um 20:00 Uhr
+                    </div>
+
+                </div>
+
+            </article>
+
+            <article class="card">
+
+                <div class="card-header">
+                    <h2>📰 News Feed</h2>
+                </div>
+
+                <div class="news-list">
+
+                    <div class="news-item">
+                        🏆 Winter Championship eröffnet
+                    </div>
+
+                    <div class="news-item">
+                        🥇 Team Phoenix gewinnt Season 12
+                    </div>
+
+                    <div class="news-item">
+                        🎮 Neue Valorant Liga angekündigt
+                    </div>
+
+                </div>
+
+            </article>
+
+        </section>
+
+        <!-- LEADERBOARD -->
+
+        <section class="card">
+
+            <div class="card-header">
+                <h2>📈 Globales Leaderboard</h2>
+            </div>
+
+            <canvas id="leaderboardChart"></canvas>
+
+        </section>
+
+        <!-- MY TOURNAMENTS -->
+
+        <section class="card">
+
+            <div class="card-header">
+                <h2>⭐ Meine Turniere</h2>
+            </div>
+
+            <div class="highlight-tournament">
+
+                <div class="tournament-info">
+
+                    <h3>
+                        Rocket League Championship
+                    </h3>
+
+                    <p>
+                        Nächstes Match heute um 20:00 Uhr
+                    </p>
+
+                </div>
+
+                <span class="badge">
+                    Demnächst
+                </span>
+
+            </div>
+
+        </section>
+
+        <!-- UPCOMING TOURNAMENTS -->
+
+        <section class="card">
+
+            <div class="card-header">
+                <h2>🏆 Kommende Turniere</h2>
+            </div>
+
+            <div class="tournament-grid">
+
+                <article class="tournament-card">
+
+                    <h3>Rocket Cup</h3>
+
+                    <p>64 Spieler</p>
+
+                    <p>Start: Morgen</p>
+
+                    <button class="btn btn-primary">
+                        Teilnehmen
+                    </button>
+
+                </article>
+
+                <article class="tournament-card">
+
+                    <h3>CS Masters</h3>
+
+                    <p>128 Spieler</p>
+
+                    <p>Start: Samstag</p>
+
+                    <button class="btn btn-primary">
+                        Teilnehmen
+                    </button>
+
+                </article>
+
+                <article class="tournament-card">
+
+                    <h3>Valorant Clash</h3>
+
+                    <p>32 Teams</p>
+
+                    <p>Start: Sonntag</p>
+
+                    <button class="btn btn-primary">
+                        Teilnehmen
+                    </button>
+
+                </article>
+
+            </div>
+
+        </section>
+
+        <!-- RESULTS -->
+
+        <section class="card">
+
+            <div class="card-header">
+                <h2>🏅 Letzte Ergebnisse</h2>
+            </div>
+
+            <ul class="results-list">
+
+                <li>🥇 Team Phoenix</li>
+                <li>🥈 Team Eclipse</li>
+                <li>🥉 Team Nova</li>
+
+            </ul>
+
+        </section>
+
+    </main>
+
+</div>
+
+<!-- MATCH RESULTS POPUP -->
+
+<div id="matchPopup" class="modal">
+
+    <div class="modal-content">
+
+        <h2>
+            Match beendet?
+        </h2>
+
+        <p>
+            Bitte Ergebnis eintragen.
+        </p>
+
+        <form>
+
+            <input
+                type="number"
+                placeholder="Deine Punkte"
+            >
+
+            <input
+                type="number"
+                placeholder="Gegner Punkte"
+            >
+
+            <button
+                class="btn btn-primary"
+                type="submit"
+            >
+                Ergebnis melden
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+<script src="js/app.js"></script>
+<script src="js/leaderboard.js"></script>
+
+
 </body>
 
 </html>
