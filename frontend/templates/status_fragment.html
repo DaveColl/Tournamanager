@@ -1,8 +1,18 @@
-{# Small, reusable snippet - included on first page load AND returned by
-   /status-fragment for the 30-second refresh, so the logic only lives here
-   once instead of being duplicated. #}
+{# Kleines, wiederverwendbares Stück HTML.
+   Es wird beim ersten Laden der Seite in index.html eingebunden UND von der
+   Route /status-fragment zurückgegeben, wenn die Seite alle 30 Sekunden
+   nachfragt. So steht die Logik nur an einer Stelle.
+
+   Die Klassen "status-ok" / "status-error" bestimmen im CSS die Farbe
+   des Punkts (grün oder rot), siehe Abschnitt "BACKEND-STATUS" in style.css. #}
 {% if backend_data %}
-    Backend says: {{ backend_data.status }} ({{ backend_data.service }})
+    <div class="status status-ok">
+        <span class="status-dot"></span>
+        <span>Backend verbunden</span>
+    </div>
 {% else %}
-    Backend unreachable.
+    <div class="status status-error">
+        <span class="status-dot"></span>
+        <span>Backend nicht erreichbar</span>
+    </div>
 {% endif %}

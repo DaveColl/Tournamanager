@@ -3,397 +3,373 @@
 
 <head>
     <meta charset="UTF-8">
+    <!-- Sorgt dafür, dass die Seite auf dem Handy nicht winzig
+         herausgezoomt angezeigt wird. -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Tournamanager</title>
 
-    <link rel="stylesheet" href="css/style.css">
+    <!-- Schriftart "Inter" von Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+    >
 
-    <!-- Icons -->
+    <!-- Icons (Font Awesome). Benutzung im HTML: <i class="fa-solid fa-trophy"></i>
+         Alle Icons findet man unter https://fontawesome.com/icons -->
     <link
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
     >
 
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Unser eigenes CSS. url_for() erzeugt den richtigen Pfad zum
+         Ordner "static/" - so findet Flask die Datei. -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
-    <!--h1>Tournamanager</h1-->
 
-    <!--This div's content comes from status_fragment.html, rendered by
-         Python. It's included here for the very first page load, and later
-         swapped out by the script below without reloading the page. -->
-    <!--div id="backend-status">{% include 'status_fragment.html' %}</div>
+<!-- Grundaufbau: Sidebar links, Inhalt rechts (siehe .layout im CSS) -->
+<div class="layout">
 
-    <script>
-        // Every 30 seconds, ask OUR OWN frontend (not the backend directly)
-        // for a fresh copy of the status snippet and drop it into the page.
-        // This is the only JavaScript on the whole site - it doesn't decide
-        // what to show, it just asks Python for HTML and displays it.
-        function refreshBackendStatus() {
-            fetch('/status-fragment')
-                .then(response => response.text())
-                .then(html => {
-                    document.getElementById('backend-status').innerHTML = html;
-                });
-        }
-
-        setInterval(refreshBackendStatus, 30000);
-    </script -->
-
-    <div class="layout">
-
-    <!-- SIDEBAR -->
-
+    <!-- ============================================================
+         SIDEBAR
+         ============================================================ -->
     <aside class="sidebar">
 
         <div class="sidebar-logo">
-            <h2>🏆 Tournamanager</h2>
+            <i class="fa-solid fa-trophy"></i>
+            <span>Tournamanager</span>
         </div>
 
         <nav class="sidebar-nav">
-
+            <!-- class="active" markiert die Seite, auf der man gerade ist -->
             <a href="#" class="active">
                 <i class="fa-solid fa-house"></i>
                 <span>Home</span>
             </a>
-
             <a href="#">
                 <i class="fa-solid fa-trophy"></i>
                 <span>Turniere</span>
             </a>
-
             <a href="#">
                 <i class="fa-solid fa-ranking-star"></i>
                 <span>Rankings</span>
             </a>
-
             <a href="#">
                 <i class="fa-solid fa-users"></i>
                 <span>Teams</span>
             </a>
-
             <a href="#">
                 <i class="fa-solid fa-calendar"></i>
                 <span>Kalender</span>
             </a>
-
             <a href="#">
                 <i class="fa-solid fa-bell"></i>
                 <span>Benachrichtigungen</span>
             </a>
-
             <a href="#">
                 <i class="fa-solid fa-gear"></i>
                 <span>Einstellungen</span>
             </a>
-
         </nav>
+
+        <!-- Backend-Status ganz unten in der Sidebar.
+             Der Inhalt kommt aus status_fragment.html (von Python erzeugt).
+             Beim ersten Laden wird er hier direkt eingefügt, danach tauscht
+             das Script unten ihn alle 30 Sekunden aus. -->
+        <div class="sidebar-footer" id="backend-status">
+            {% include 'status_fragment.html' %}
+        </div>
 
     </aside>
 
-    <!-- MAIN CONTENT -->
-
+    <!-- ============================================================
+         HAUPTBEREICH
+         ============================================================ -->
     <main class="main-content">
 
-        <!-- HEADER -->
-
+        <!-- KOPFZEILE -->
         <header class="topbar">
-
             <div class="title-section">
-                <h1>Tournamanager</h1>
-                <p>Die Plattform für E-Sports und Community Turniere</p>
+                <h1>Dashboard</h1>
+                <p>Die Plattform für E-Sports- und Community-Turniere</p>
             </div>
 
             <div class="auth-buttons">
-
-                <button class="btn btn-secondary">
-                    Anmelden
-                </button>
-
-                <button class="btn btn-primary">
-                    Registrieren
-                </button>
-
+                <button class="btn btn-secondary">Anmelden</button>
+                <button class="btn btn-primary">Registrieren</button>
             </div>
-
         </header>
 
-        <!-- HERO -->
-
+        <!-- HERO: großer Begrüßungsbereich -->
         <section class="hero-section">
-
             <div class="hero-content">
-
-                <h2>
-                    Turniere organisieren war noch nie so einfach
-                </h2>
-
+                <h2>Turniere organisieren war noch nie so einfach</h2>
                 <p>
                     Erstelle eigene Turniere, verfolge Live-Matches,
                     verwalte Teams und erklimme die Rangliste.
                 </p>
-
                 <div class="hero-buttons">
-
                     <button class="btn btn-primary">
+                        <i class="fa-solid fa-plus"></i>
                         Turnier erstellen
                     </button>
-
-                    <button class="btn btn-secondary">
-                        Turniere entdecken
-                    </button>
-
+                    <button class="btn btn-secondary">Turniere entdecken</button>
                 </div>
-
             </div>
-
         </section>
 
-        <!-- STATS -->
-
+        <!-- STATISTIKEN: 4 Kacheln nebeneinander -->
         <section class="stats-grid">
-
             <article class="stat-card">
-                <h3>1.204</h3>
-                <p>Spieler Online</p>
+                <p class="stat-label">Spieler online</p>
+                <p class="stat-value">1.204</p>
             </article>
-
             <article class="stat-card">
-                <h3>327</h3>
-                <p>Aktive Turniere</p>
+                <p class="stat-label">Aktive Turniere</p>
+                <p class="stat-value">327</p>
             </article>
-
             <article class="stat-card">
-                <h3>29</h3>
-                <p>Live Matches</p>
+                <p class="stat-label">Live-Matches</p>
+                <p class="stat-value">29</p>
             </article>
-
             <article class="stat-card">
-                <h3>54.694</h3>
-                <p>Matches Gesamt</p>
+                <p class="stat-label">Matches gesamt</p>
+                <p class="stat-value">54.694</p>
             </article>
-
         </section>
 
-        <!-- LIVE + NEWS -->
-
+        <!-- LIVE TICKER + NEWS: zwei Karten nebeneinander -->
         <section class="content-grid">
 
             <article class="card">
-
                 <div class="card-header">
-                    <h2>🔴 Live Ticker</h2>
+                    <h2><i class="fa-solid fa-tower-broadcast"></i> Live Ticker</h2>
+                    <span class="badge badge-live">Live</span>
                 </div>
 
-                <div class="ticker-list">
-
-                    <div class="ticker-item">
-                        Alpha 2 : 1 Beta
-                    </div>
-
-                    <div class="ticker-item">
-                        Rocket Cup startet in 15 Minuten
-                    </div>
-
-                    <div class="ticker-item">
-                        Dein nächstes Match beginnt um 20:00 Uhr
-                    </div>
-
-                </div>
-
+                <ul>
+                    <li class="list-item">
+                        <span>Alpha <span class="score">2 : 1</span> Beta</span>
+                        <span class="list-meta">2. Halbzeit</span>
+                    </li>
+                    <li class="list-item">
+                        <span>Rocket Cup startet</span>
+                        <span class="list-meta">in 15 Min.</span>
+                    </li>
+                    <li class="list-item">
+                        <span>Dein nächstes Match</span>
+                        <span class="list-meta">20:00 Uhr</span>
+                    </li>
+                </ul>
             </article>
 
             <article class="card">
-
                 <div class="card-header">
-                    <h2>📰 News Feed</h2>
+                    <h2><i class="fa-solid fa-newspaper"></i> News</h2>
+                    <a href="#" class="card-link">Alle anzeigen</a>
                 </div>
 
-                <div class="news-list">
-
-                    <div class="news-item">
-                        🏆 Winter Championship eröffnet
-                    </div>
-
-                    <div class="news-item">
-                        🥇 Team Phoenix gewinnt Season 12
-                    </div>
-
-                    <div class="news-item">
-                        🎮 Neue Valorant Liga angekündigt
-                    </div>
-
-                </div>
-
+                <ul>
+                    <li class="list-item">
+                        <span>Winter Championship eröffnet</span>
+                        <span class="list-meta">heute</span>
+                    </li>
+                    <li class="list-item">
+                        <span>Team Phoenix gewinnt Season 12</span>
+                        <span class="list-meta">gestern</span>
+                    </li>
+                    <li class="list-item">
+                        <span>Neue Valorant-Liga angekündigt</span>
+                        <span class="list-meta">vor 3 Tagen</span>
+                    </li>
+                </ul>
             </article>
 
         </section>
 
-        <!-- LEADERBOARD -->
-
+        <!-- MEINE TURNIERE -->
         <section class="card">
-
             <div class="card-header">
-                <h2>📈 Globales Leaderboard</h2>
-            </div>
-
-            <canvas id="leaderboardChart"></canvas>
-
-        </section>
-
-        <!-- MY TOURNAMENTS -->
-
-        <section class="card">
-
-            <div class="card-header">
-                <h2>⭐ Meine Turniere</h2>
+                <h2><i class="fa-solid fa-star"></i> Meine Turniere</h2>
             </div>
 
             <div class="highlight-tournament">
-
                 <div class="tournament-info">
-
-                    <h3>
-                        Rocket League Championship
-                    </h3>
-
-                    <p>
-                        Nächstes Match heute um 20:00 Uhr
-                    </p>
-
+                    <h3>Rocket League Championship</h3>
+                    <p>Nächstes Match heute um 20:00 Uhr</p>
                 </div>
-
-                <span class="badge">
-                    Demnächst
-                </span>
-
+                <span class="badge badge-upcoming">Demnächst</span>
             </div>
-
         </section>
 
-        <!-- UPCOMING TOURNAMENTS -->
-
+        <!-- KOMMENDE TURNIERE: Kacheln, die sich automatisch anordnen -->
         <section class="card">
-
             <div class="card-header">
-                <h2>🏆 Kommende Turniere</h2>
+                <h2><i class="fa-solid fa-calendar-days"></i> Kommende Turniere</h2>
+                <a href="#" class="card-link">Alle anzeigen</a>
             </div>
 
             <div class="tournament-grid">
 
                 <article class="tournament-card">
-
                     <h3>Rocket Cup</h3>
-
-                    <p>64 Spieler</p>
-
-                    <p>Start: Morgen</p>
-
-                    <button class="btn btn-primary">
-                        Teilnehmen
-                    </button>
-
+                    <p><i class="fa-solid fa-user"></i> 64 Spieler</p>
+                    <p><i class="fa-regular fa-clock"></i> Start: morgen</p>
+                    <div class="card-actions">
+                        <button class="btn btn-primary btn-small">Teilnehmen</button>
+                    </div>
                 </article>
 
                 <article class="tournament-card">
-
                     <h3>CS Masters</h3>
-
-                    <p>128 Spieler</p>
-
-                    <p>Start: Samstag</p>
-
-                    <button class="btn btn-primary">
-                        Teilnehmen
-                    </button>
-
+                    <p><i class="fa-solid fa-user"></i> 128 Spieler</p>
+                    <p><i class="fa-regular fa-clock"></i> Start: Samstag</p>
+                    <div class="card-actions">
+                        <button class="btn btn-primary btn-small">Teilnehmen</button>
+                    </div>
                 </article>
 
                 <article class="tournament-card">
-
                     <h3>Valorant Clash</h3>
-
-                    <p>32 Teams</p>
-
-                    <p>Start: Sonntag</p>
-
-                    <button class="btn btn-primary">
-                        Teilnehmen
-                    </button>
-
+                    <p><i class="fa-solid fa-users"></i> 32 Teams</p>
+                    <p><i class="fa-regular fa-clock"></i> Start: Sonntag</p>
+                    <div class="card-actions">
+                        <button class="btn btn-primary btn-small">Teilnehmen</button>
+                    </div>
                 </article>
 
             </div>
-
         </section>
 
-        <!-- RESULTS -->
-
+        <!-- LEADERBOARD als Tabelle.
+             Vorher war hier ein leeres Diagramm (Chart.js), aber das Script
+             dafür (js/leaderboard.js) gab es nicht. Eine Tabelle zeigt
+             Ranglisten ohnehin übersichtlicher. -->
         <section class="card">
-
             <div class="card-header">
-                <h2>🏅 Letzte Ergebnisse</h2>
+                <h2><i class="fa-solid fa-ranking-star"></i> Globales Leaderboard</h2>
+                <a href="#" class="card-link">Vollständige Rangliste</a>
             </div>
 
-            <ul class="results-list">
+            <!-- Der Wrapper macht die Tabelle auf dem Handy seitlich scrollbar -->
+            <div class="table-wrapper">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Platz</th>
+                            <th>Team</th>
+                            <th class="num">Siege</th>
+                            <th class="num">Niederlagen</th>
+                            <th class="num">Punkte</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- rank-1/2/3 färbt den Kreis gold, silber, bronze -->
+                        <tr>
+                            <td><span class="rank rank-1">1</span></td>
+                            <td>Team Phoenix</td>
+                            <td class="num">24</td>
+                            <td class="num">3</td>
+                            <td class="num">2.140</td>
+                        </tr>
+                        <tr>
+                            <td><span class="rank rank-2">2</span></td>
+                            <td>Team Eclipse</td>
+                            <td class="num">21</td>
+                            <td class="num">6</td>
+                            <td class="num">1.985</td>
+                        </tr>
+                        <tr>
+                            <td><span class="rank rank-3">3</span></td>
+                            <td>Team Nova</td>
+                            <td class="num">19</td>
+                            <td class="num">8</td>
+                            <td class="num">1.870</td>
+                        </tr>
+                        <tr>
+                            <td><span class="rank">4</span></td>
+                            <td>Team Alpha</td>
+                            <td class="num">17</td>
+                            <td class="num">10</td>
+                            <td class="num">1.720</td>
+                        </tr>
+                        <tr>
+                            <td><span class="rank">5</span></td>
+                            <td>Team Beta</td>
+                            <td class="num">15</td>
+                            <td class="num">12</td>
+                            <td class="num">1.605</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
 
-                <li>🥇 Team Phoenix</li>
-                <li>🥈 Team Eclipse</li>
-                <li>🥉 Team Nova</li>
+        <!-- LETZTE ERGEBNISSE -->
+        <section class="card">
+            <div class="card-header">
+                <h2><i class="fa-solid fa-flag-checkered"></i> Letzte Ergebnisse</h2>
+            </div>
 
+            <ul>
+                <li class="list-item">
+                    <span class="result-team"><span class="rank rank-1">1</span> Team Phoenix</span>
+                    <span class="list-meta">Season 12</span>
+                </li>
+                <li class="list-item">
+                    <span class="result-team"><span class="rank rank-2">2</span> Team Eclipse</span>
+                    <span class="list-meta">Season 12</span>
+                </li>
+                <li class="list-item">
+                    <span class="result-team"><span class="rank rank-3">3</span> Team Nova</span>
+                    <span class="list-meta">Season 12</span>
+                </li>
             </ul>
-
         </section>
 
     </main>
 
 </div>
 
-<!-- MATCH RESULTS POPUP -->
-
+<!-- ============================================================
+     POPUP: Ergebnis eintragen
+     Ist standardmäßig versteckt. Anzeigen mit JavaScript:
+         document.getElementById('matchPopup').classList.add('open');
+     Wieder verstecken:
+         document.getElementById('matchPopup').classList.remove('open');
+     ============================================================ -->
 <div id="matchPopup" class="modal">
-
     <div class="modal-content">
-
-        <h2>
-            Match beendet?
-        </h2>
-
-        <p>
-            Bitte Ergebnis eintragen.
-        </p>
+        <h2>Match beendet?</h2>
+        <p>Bitte trage das Ergebnis ein.</p>
 
         <form>
-
-            <input
-                type="number"
-                placeholder="Deine Punkte"
-            >
-
-            <input
-                type="number"
-                placeholder="Gegner Punkte"
-            >
-
-            <button
-                class="btn btn-primary"
-                type="submit"
-            >
-                Ergebnis melden
-            </button>
-
+            <input type="number" min="0" placeholder="Deine Punkte">
+            <input type="number" min="0" placeholder="Punkte des Gegners">
+            <button class="btn btn-primary" type="submit">Ergebnis melden</button>
         </form>
-
     </div>
-
 </div>
 
-<script src="js/app.js"></script>
-<script src="js/leaderboard.js"></script>
+<script>
+    // Fragt alle 30 Sekunden UNSER Frontend (nicht direkt das Backend) nach
+    // einem frischen Status-Schnipsel und setzt ihn in die Sidebar ein.
+    // JavaScript entscheidet hier nichts selbst - es holt nur fertiges HTML
+    // von Python ab und zeigt es an.
+    function refreshBackendStatus() {
+        fetch('/status-fragment')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('backend-status').innerHTML = html;
+            });
+    }
 
+    setInterval(refreshBackendStatus, 30000);
+</script>
 
 </body>
 

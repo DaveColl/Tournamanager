@@ -1,0 +1,922 @@
+/* =====================================================================
+   TOURNAMANAGER - STYLESHEET
+   =====================================================================
+
+   Kurze Einführung für CSS-Neulinge:
+
+   Eine CSS-Regel sieht immer so aus:
+
+       selektor {
+           eigenschaft: wert;
+       }
+
+   - Der SELEKTOR sagt, WELCHE HTML-Elemente gemeint sind.
+       .card        -> alle Elemente mit class="card"   (Punkt = Klasse)
+       #status      -> das Element mit id="status"       (Raute = ID)
+       body         -> alle <body>-Elemente              (ohne Zeichen = Tag)
+       .card h2     -> alle <h2>, die IRGENDWO in einer .card stecken
+       .btn:hover   -> ein .btn, während die Maus darüber ist
+
+   - Die EIGENSCHAFT sagt, WAS geändert wird (Farbe, Abstand, Größe ...).
+   - Der WERT sagt, WIE es aussehen soll.
+
+   Einheiten, die hier oft vorkommen:
+       px   -> feste Pixel
+       rem  -> Vielfaches der Grundschriftgröße (1rem = meist 16px).
+               Vorteil: Wenn jemand im Browser die Schrift größer stellt,
+               wächst alles mit.
+       %    -> Prozent vom Elternelement
+       fr   -> "fraction", ein Anteil vom freien Platz in einem Grid
+
+   Die Datei ist von oben nach unten aufgebaut:
+       1. Farben und Grundwerte (Variablen)
+       2. Grundeinstellungen für die ganze Seite
+       3. Layout (Sidebar + Hauptbereich)
+       4. Einzelne Bereiche der Seite in der Reihenfolge, in der sie im
+          HTML vorkommen
+       5. Anpassungen für kleine Bildschirme (Handy/Tablet)
+   ===================================================================== */
+
+
+/* =====================================================================
+   1. VARIABLEN
+   =====================================================================
+   ":root" ist das oberste Element der Seite. Was hier definiert wird,
+   gilt überall. Variablen beginnen mit zwei Bindestrichen (--name)
+   und werden später mit var(--name) benutzt.
+
+   Vorteil: Wenn wir eine Farbe ändern wollen, ändern wir sie nur HIER
+   und nicht an 30 Stellen in der Datei.
+
+   Die Farben sind die gleichen wie vorher (Farbpalette "Catppuccin Mocha").
+*/
+:root {
+    /* --- Akzentfarben (für Hervorhebungen, Buttons, Status) --- */
+    --rosewater: #f5e0dc;
+    --flamingo: #f2cdcd;
+    --pink: #f5c2e7;
+    --mauve: #cba6f7;      /* Hauptfarbe der Seite (lila) */
+    --red: #f38ba8;        /* Fehler / "Live" */
+    --maroon: #eba0ac;
+    --peach: #fab387;      /* Bronze / Platz 3 */
+    --yellow: #f9e2af;     /* Gold / Platz 1 */
+    --green: #a6e3a1;      /* Erfolg / "läuft" */
+    --teal: #94e2d5;
+    --sky: #89dceb;
+    --sapphire: #74c7ec;
+    --blue: #89b4fa;
+    --lavender: #b4befe;   /* Silber / Platz 2, Überschriften */
+
+    /* --- Textfarben --- */
+    --text: #cdd6f4;       /* normaler Text */
+    --subtext: #bac2de;    /* etwas dunkler, für Nebeninfos */
+    --overlay: #9399b2;    /* noch dunkler, für ganz unwichtige Infos */
+
+    /* --- Flächen (von hell nach dunkel) --- */
+    --surface0: #313244;
+    --surface1: #45475a;
+    --surface2: #585b70;
+
+    /* --- Hintergründe (von hell nach dunkel) --- */
+    --base: #1e1e2e;       /* Hintergrund des Hauptbereichs */
+    --mantle: #181825;     /* Hintergrund der Karten */
+    --crust: #11111b;      /* Hintergrund der Sidebar */
+
+    /* --- Wiederverwendbare Werte --- */
+    --radius: 12px;                  /* Wie rund die Ecken sind */
+    --border: 1px solid var(--surface0); /* Standard-Rahmenlinie */
+    --sidebar-width: 250px;
+}
+
+
+/* =====================================================================
+   2. GRUNDEINSTELLUNGEN
+   ===================================================================== */
+
+/* Der Stern "*" wählt ALLE Elemente aus.
+   Browser geben vielen Elementen von sich aus Abstände (z.B. <h1>, <ul>).
+   Die setzen wir hier auf 0, damit wir selbst die Kontrolle haben. */
+* {
+    margin: 0;
+    padding: 0;
+
+    /* Normalerweise wird ein Rahmen und Innenabstand ZUSÄTZLICH zur
+       Breite gerechnet. "border-box" sorgt dafür, dass width: 200px
+       auch wirklich 200px breit ist - inklusive Rahmen und Abstand.
+       Das macht das Rechnen viel einfacher. */
+    box-sizing: border-box;
+}
+
+body {
+    /* Schriftart. Wenn "Inter" nicht geladen werden kann, nimmt der
+       Browser die nächste in der Liste. "sans-serif" ist der letzte
+       Notnagel: irgendeine Schrift ohne Serifen. */
+    font-family: "Inter", system-ui, sans-serif;
+
+    /* line-height = Zeilenabstand. 1.5 heißt: 1,5-fache Schriftgröße.
+       Das macht längere Texte deutlich angenehmer zu lesen. */
+    line-height: 1.5;
+
+    background: var(--base);
+    color: var(--text);
+}
+
+/* Links sollen keine Unterstreichung haben und die Textfarbe erben
+   ("inherit" = übernimm den Wert vom Elternelement). */
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+/* Listen ohne Aufzählungspunkte - die gestalten wir selbst. */
+ul {
+    list-style: none;
+}
+
+/* Buttons und Eingabefelder übernehmen sonst NICHT die Schrift der Seite.
+   Mit "inherit" bekommen sie dieselbe Schrift wie der restliche Text. */
+button,
+input {
+    font: inherit;
+}
+
+
+/* =====================================================================
+   3. LAYOUT: SIDEBAR LINKS + INHALT RECHTS
+   =====================================================================
+   "Flexbox" (display: flex) legt Kinder-Elemente nebeneinander.
+   Hier sind die Kinder: <aside class="sidebar"> und <main>.
+*/
+.layout {
+    display: flex;
+
+    /* 100vh = 100% der Fensterhöhe ("viewport height").
+       So geht die Sidebar immer bis ganz nach unten. */
+    min-height: 100vh;
+}
+
+
+/* ---------------------------------------------------------------------
+   3a. SIDEBAR
+   --------------------------------------------------------------------- */
+.sidebar {
+    width: var(--sidebar-width);
+
+    /* flex-shrink: 0 verhindert, dass die Sidebar schmaler gedrückt wird,
+       wenn der Inhalt rechts viel Platz braucht. */
+    flex-shrink: 0;
+
+    background: var(--crust);
+    border-right: var(--border);
+    padding: 1.5rem 1rem;
+
+    /* Auch IN der Sidebar nutzen wir Flexbox, diesmal von oben nach
+       unten (column). So können wir den Status-Kasten nach ganz unten
+       schieben (siehe .sidebar-footer). */
+    display: flex;
+    flex-direction: column;
+
+    /* "sticky" + top: 0 + height: 100vh = Die Sidebar bleibt beim
+       Runterscrollen stehen, nur der Inhalt rechts scrollt. */
+    position: sticky;
+    top: 0;
+    height: 100vh;
+}
+
+/* Das Logo oben in der Sidebar */
+.sidebar-logo {
+    display: flex;
+    align-items: center;   /* Icon und Text vertikal mittig ausrichten */
+    gap: 0.75rem;          /* Abstand zwischen Icon und Text */
+
+    padding: 0 0.75rem;
+    margin-bottom: 2rem;
+
+    font-size: 1.15rem;
+    font-weight: 700;      /* 700 = fett, 400 = normal */
+    color: var(--text);
+}
+
+.sidebar-logo i {
+    color: var(--mauve);
+}
+
+/* Die Navigation: Links untereinander */
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+/* Ein einzelner Link in der Navigation */
+.sidebar-nav a {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+
+    padding: 0.65rem 0.75rem;
+    border-radius: 8px;
+
+    color: var(--subtext);
+    font-size: 0.95rem;
+
+    /* "transition" lässt Änderungen (z.B. beim Hover) weich ablaufen
+       statt schlagartig. 0.15s = 0,15 Sekunden. */
+    transition: background 0.15s, color 0.15s;
+}
+
+/* Alle Icons bekommen dieselbe Breite, damit die Texte daneben
+   sauber in einer Linie stehen. */
+.sidebar-nav a i {
+    width: 1.1rem;
+    text-align: center;
+}
+
+/* ":hover" = während die Maus über dem Link ist */
+.sidebar-nav a:hover {
+    background: var(--surface0);
+    color: var(--text);
+}
+
+/* Der Link der aktuellen Seite (class="active" im HTML) */
+.sidebar-nav a.active {
+    background: var(--surface0);
+    color: var(--mauve);
+    font-weight: 600;
+}
+
+/* Unterer Bereich der Sidebar mit dem Backend-Status.
+   "margin-top: auto" schiebt das Element in einer Flex-Spalte ganz nach
+   unten - der freie Platz wird komplett ÜBER dem Element eingefügt. */
+.sidebar-footer {
+    margin-top: auto;
+    padding: 0.75rem;
+    border-top: var(--border);
+    font-size: 0.8rem;
+    color: var(--overlay);
+}
+
+
+/* ---------------------------------------------------------------------
+   3b. BACKEND-STATUS (kleiner farbiger Punkt + Text)
+   --------------------------------------------------------------------- */
+.status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Der Punkt: ein leeres Element, das durch gleiche Breite und Höhe und
+   border-radius: 50% zu einem Kreis wird. */
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+/* Grün, wenn das Backend antwortet ... */
+.status-ok .status-dot {
+    background: var(--green);
+}
+
+/* ... rot, wenn nicht. */
+.status-error .status-dot {
+    background: var(--red);
+}
+
+
+/* ---------------------------------------------------------------------
+   3c. HAUPTBEREICH
+   --------------------------------------------------------------------- */
+.main-content {
+    /* flex: 1 = "Nimm dir den ganzen restlichen Platz neben der Sidebar". */
+    flex: 1;
+
+    /* min-width: 0 ist ein bekannter Flexbox-Trick: Ohne ihn kann breiter
+       Inhalt (z.B. eine Tabelle) den Bereich über den Rand drücken. */
+    min-width: 0;
+
+    padding: 2rem 2.5rem;
+}
+
+
+/* =====================================================================
+   4. BEREICHE DER SEITE
+   ===================================================================== */
+
+/* ---------------------------------------------------------------------
+   4a. KOPFZEILE (Titel links, Buttons rechts)
+   --------------------------------------------------------------------- */
+.topbar {
+    display: flex;
+
+    /* space-between = erstes Kind ganz links, letztes ganz rechts */
+    justify-content: space-between;
+    align-items: center;
+
+    /* Wenn der Platz nicht reicht, rutschen die Buttons in die
+       nächste Zeile statt aus dem Bild zu laufen. */
+    flex-wrap: wrap;
+    gap: 1rem;
+
+    margin-bottom: 2rem;
+}
+
+.title-section h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+}
+
+.title-section p {
+    color: var(--subtext);
+    font-size: 0.95rem;
+}
+
+.auth-buttons {
+    display: flex;
+    gap: 0.75rem;
+}
+
+
+/* ---------------------------------------------------------------------
+   4b. BUTTONS
+   ---------------------------------------------------------------------
+   Jeder Button hat zwei Klassen, z.B. class="btn btn-primary":
+     .btn          -> Grundform (Größe, Ecken, Schrift) - für ALLE Buttons
+     .btn-primary  -> Farbe für die wichtigste Aktion
+     .btn-secondary-> Farbe für weniger wichtige Aktionen
+   So muss die Grundform nur einmal geschrieben werden.
+*/
+.btn {
+    /* inline-flex = Button verhält sich wie Text (steht in einer Zeile),
+       kann aber Icon + Text sauber nebeneinander ausrichten. */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+
+    padding: 0.6rem 1.2rem;
+    border: 1px solid transparent;   /* unsichtbarer Rahmen, damit alle
+                                        Buttons gleich hoch sind */
+    border-radius: 8px;
+
+    font-size: 0.9rem;
+    font-weight: 600;
+
+    cursor: pointer;   /* Mauszeiger wird zur Hand */
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.btn-primary {
+    background: var(--mauve);
+    color: var(--crust);   /* dunkler Text auf hellem Lila = gut lesbar */
+}
+
+.btn-primary:hover {
+    background: var(--lavender);
+}
+
+.btn-secondary {
+    background: transparent;
+    border-color: var(--surface1);
+    color: var(--text);
+}
+
+.btn-secondary:hover {
+    background: var(--surface0);
+}
+
+/* Kleinere Variante, z.B. für Buttons in Karten */
+.btn-small {
+    padding: 0.45rem 0.9rem;
+    font-size: 0.85rem;
+}
+
+
+/* ---------------------------------------------------------------------
+   4c. HERO (der große Begrüßungsbereich oben)
+   --------------------------------------------------------------------- */
+.hero-section {
+    padding: 3rem;
+    margin-bottom: 2rem;
+    border-radius: var(--radius);
+    border: var(--border);
+    background: var(--mantle);
+}
+
+.hero-content {
+    /* Text nicht zu breit werden lassen - lange Zeilen liest man schlecht. */
+    max-width: 640px;
+}
+
+.hero-content h2 {
+    font-size: 2.25rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+}
+
+.hero-content p {
+    color: var(--subtext);
+    font-size: 1.05rem;
+    margin-bottom: 1.75rem;
+}
+
+.hero-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+
+/* ---------------------------------------------------------------------
+   4d. STATISTIK-KACHELN
+   ---------------------------------------------------------------------
+   "Grid" (display: grid) ordnet Elemente in Zeilen UND Spalten an.
+   Perfekt für gleich große Kacheln.
+*/
+.stats-grid {
+    display: grid;
+
+    /* repeat(4, 1fr) = 4 Spalten, jede bekommt gleich viel Platz. */
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: var(--mantle);
+    border: var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+}
+
+/* Die kleine Beschriftung über der Zahl */
+.stat-label {
+    font-size: 0.9rem;
+    color: var(--subtext);
+}
+
+/* Die große Zahl */
+.stat-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text);
+
+    /* Alle Ziffern gleich breit - so "springen" Zahlen nicht,
+       wenn sie sich ändern. */
+    font-variant-numeric: tabular-nums;
+}
+
+
+/* ---------------------------------------------------------------------
+   4e. KARTEN (die Kästen für Live Ticker, News, Leaderboard ...)
+   --------------------------------------------------------------------- */
+
+/* Zwei Karten nebeneinander (Live Ticker + News) */
+.content-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.card {
+    background: var(--mantle);
+    border: var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+/* Innerhalb von .content-grid regelt "gap" den Abstand, deshalb
+   brauchen die Karten dort keinen eigenen Abstand nach unten. */
+.content-grid .card {
+    margin-bottom: 0;
+}
+
+/* Kopfzeile einer Karte: Überschrift links, evtl. Link/Badge rechts */
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.card-header h2 {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+/* Das Icon vor der Überschrift in der Akzentfarbe */
+.card-header h2 i {
+    color: var(--mauve);
+}
+
+/* Kleiner Link rechts in der Kopfzeile ("Alle anzeigen") */
+.card-link {
+    font-size: 0.85rem;
+    color: var(--subtext);
+}
+
+.card-link:hover {
+    color: var(--mauve);
+}
+
+
+/* ---------------------------------------------------------------------
+   4f. LISTEN IN KARTEN (Live Ticker + News)
+   --------------------------------------------------------------------- */
+.list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+
+    padding: 0.75rem 0;
+
+    /* Trennlinie unter jedem Eintrag ... */
+    border-bottom: var(--border);
+}
+
+/* ... außer unter dem letzten. ":last-child" = das letzte Element
+   in seinem Elternelement. */
+.list-item:last-child {
+    border-bottom: none;
+}
+
+/* Zeit/Datum rechts im Eintrag */
+.list-meta {
+    font-size: 0.8rem;
+    color: var(--overlay);
+
+    /* Text nicht umbrechen, damit "vor 2 Std." zusammenbleibt */
+    white-space: nowrap;
+}
+
+/* Spielstand im Live Ticker, z.B. "2 : 1" */
+.score {
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--mauve);
+    margin: 0 0.4rem;
+}
+
+
+/* ---------------------------------------------------------------------
+   4g. BADGES (kleine farbige Etiketten wie "Live" oder "Demnächst")
+   --------------------------------------------------------------------- */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;  /* sehr großer Wert = komplett runde Enden */
+
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* Farbvarianten. Hintergrund = Farbe sehr durchsichtig,
+   Text = dieselbe Farbe voll deckend. Wirkt dezent, aber gut lesbar. */
+.badge-live {
+    background: rgba(243, 139, 168, 0.15);  /* --red */
+    color: var(--red);
+}
+
+.badge-upcoming {
+    background: rgba(166, 227, 161, 0.15);  /* --green */
+    color: var(--green);
+}
+
+
+/* ---------------------------------------------------------------------
+   4h. TABELLEN (Leaderboard)
+   --------------------------------------------------------------------- */
+
+/* Der Wrapper sorgt dafür, dass man die Tabelle auf dem Handy
+   seitlich scrollen kann, statt dass sie die Seite sprengt. */
+.table-wrapper {
+    overflow-x: auto;
+}
+
+.table {
+    width: 100%;
+
+    /* Ohne das hätte jede Zelle ihren eigenen Rahmen mit Lücke dazwischen. */
+    border-collapse: collapse;
+
+    font-size: 0.9rem;
+}
+
+/* th = Kopfzelle, td = normale Zelle */
+.table th,
+.table td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: var(--border);
+}
+
+.table th {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--subtext);
+}
+
+/* Zahlen-Spalten rechtsbündig - so stehen Einer unter Einern. */
+.table .num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+/* "tbody tr" = jede Zeile im Tabellenkörper (nicht die Kopfzeile) */
+.table tbody tr:hover {
+    background: var(--surface0);
+}
+
+.table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+
+/* ---------------------------------------------------------------------
+   4i. PLATZIERUNG (Kreis mit Zahl, z.B. für Platz 1-3)
+   --------------------------------------------------------------------- */
+.rank {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 50%;
+
+    background: var(--surface0);
+    color: var(--subtext);
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+/* Gold, Silber, Bronze aus unserer Palette */
+.rank-1 { background: var(--yellow);   color: var(--crust); }
+.rank-2 { background: var(--lavender); color: var(--crust); }
+.rank-3 { background: var(--peach);    color: var(--crust); }
+
+/* Platz-Kreis + Teamname nebeneinander (bei "Letzte Ergebnisse") */
+.result-team {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+
+/* ---------------------------------------------------------------------
+   4j. MEINE TURNIERE (hervorgehobenes Turnier)
+   --------------------------------------------------------------------- */
+.highlight-tournament {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+
+    padding: 1rem 1.25rem;
+    border-radius: 8px;
+    background: var(--surface0);
+}
+
+.tournament-info h3 {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.tournament-info p {
+    font-size: 0.85rem;
+    color: var(--subtext);
+}
+
+
+/* ---------------------------------------------------------------------
+   4k. KOMMENDE TURNIERE (Kacheln)
+   --------------------------------------------------------------------- */
+.tournament-grid {
+    display: grid;
+
+    /* So viele Spalten wie passen, jede mindestens 220px breit.
+       "auto-fill" + "minmax" = das Grid passt sich von selbst an die
+       Bildschirmbreite an, ohne extra Regeln für Handys. */
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1rem;
+}
+
+.tournament-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+
+    padding: 1.25rem;
+    border-radius: 8px;
+    background: var(--surface0);
+    border: 1px solid transparent;
+
+    transition: border-color 0.15s;
+}
+
+.tournament-card:hover {
+    border-color: var(--surface2);
+}
+
+.tournament-card h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+/* Kleine Infozeilen mit Icon (Teilnehmer, Startdatum) */
+.tournament-card p {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    font-size: 0.85rem;
+    color: var(--subtext);
+}
+
+.tournament-card p i {
+    width: 1rem;
+    color: var(--overlay);
+}
+
+/* Der Bereich mit dem Button soll immer ganz unten in der Kachel sitzen -
+   auch wenn Kacheln unterschiedlich viel Text haben. Gleicher Trick wie
+   bei .sidebar-footer: margin-top: auto.
+   padding-top sorgt für etwas Luft zwischen Text und Button. */
+.tournament-card .card-actions {
+    margin-top: auto;
+    padding-top: 1rem;
+}
+
+/* Der Button im Aktionsbereich soll die ganze Breite der Kachel nutzen. */
+.tournament-card .card-actions .btn {
+    width: 100%;
+}
+
+
+/* ---------------------------------------------------------------------
+   4l. POPUP / MODAL (Ergebnis eintragen)
+   ---------------------------------------------------------------------
+   Das Popup ist standardmäßig versteckt (display: none).
+   Später kann JavaScript die Klasse "open" hinzufügen, dann wird es
+   angezeigt:  document.getElementById('matchPopup').classList.add('open')
+*/
+.modal {
+    display: none;
+
+    /* "fixed" + inset: 0 = über den GANZEN Bildschirm legen,
+       egal wie weit gescrollt wurde. */
+    position: fixed;
+    inset: 0;
+
+    /* z-index bestimmt, was oben liegt. Höher = weiter vorne. */
+    z-index: 100;
+
+    /* Halbdurchsichtiger dunkler Hintergrund hinter dem Popup */
+    background: rgba(17, 17, 27, 0.75);
+
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+}
+
+.modal.open {
+    display: flex;
+}
+
+.modal-content {
+    width: 100%;
+    max-width: 400px;
+
+    background: var(--mantle);
+    border: var(--border);
+    border-radius: var(--radius);
+    padding: 2rem;
+}
+
+.modal-content h2 {
+    font-size: 1.25rem;
+    margin-bottom: 0.25rem;
+}
+
+.modal-content p {
+    color: var(--subtext);
+    margin-bottom: 1.5rem;
+}
+
+.modal-content form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.modal-content input {
+    width: 100%;
+    padding: 0.65rem 0.8rem;
+
+    background: var(--surface0);
+    border: 1px solid var(--surface1);
+    border-radius: 8px;
+    color: var(--text);
+}
+
+/* ":focus" = das Feld, in das gerade getippt wird.
+   "outline" ist der Rahmen, den der Browser von sich aus zeichnet -
+   den ersetzen wir durch einen Rahmen in unserer Farbe. */
+.modal-content input:focus {
+    outline: none;
+    border-color: var(--mauve);
+}
+
+/* Platzhaltertext im Eingabefeld */
+.modal-content input::placeholder {
+    color: var(--overlay);
+}
+
+
+/* =====================================================================
+   5. KLEINE BILDSCHIRME (RESPONSIVE)
+   =====================================================================
+   "@media (max-width: 1000px)" bedeutet: Die Regeln in diesem Block
+   gelten NUR, wenn das Fenster 1000px breit oder schmaler ist.
+   Sie überschreiben die Regeln von oben.
+*/
+@media (max-width: 1000px) {
+
+    /* Statt 4 nur noch 2 Kacheln pro Zeile */
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* Live Ticker und News untereinander statt nebeneinander */
+    .content-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 760px) {
+
+    /* Sidebar wird zu einer Leiste oben, statt links */
+    .layout {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: static;        /* nicht mehr "sticky" */
+        border-right: none;
+        border-bottom: var(--border);
+        padding: 1rem;
+    }
+
+    .sidebar-logo {
+        margin-bottom: 1rem;
+    }
+
+    /* Navigation nebeneinander und seitlich scrollbar */
+    .sidebar-nav {
+        flex-direction: row;
+        overflow-x: auto;
+    }
+
+    /* Auf dem Handy nur Icons, ohne Text - spart Platz */
+    .sidebar-nav a span {
+        display: none;
+    }
+
+    .sidebar-footer {
+        display: none;
+    }
+
+    .main-content {
+        padding: 1.25rem 1rem;
+    }
+
+    .hero-section {
+        padding: 1.75rem;
+    }
+
+    .hero-content h2 {
+        font-size: 1.6rem;
+    }
+
+    /* Bei "Meine Turniere" Badge unter den Text statt daneben */
+    .highlight-tournament {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
